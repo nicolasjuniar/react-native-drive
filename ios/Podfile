@@ -1,0 +1,35 @@
+# Uncomment the next line to define a global platform for your project
+# platform :ios, '9.0'
+
+target 'ReactNativeDrive' do
+  # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
+  # use_frameworks!
+
+  # Pods for ReactNativeDrive
+
+  target 'ReactNativeDrive-tvOSTests' do
+    inherit! :search_paths
+    # Pods for testing
+    pod 'RNGoogleSignin', :path => '../node_modules/react-native-google-signin'
+
+  end
+
+  target 'ReactNativeDriveTests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+end
+
+target 'ReactNativeDrive-tvOS' do
+  # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
+  # use_frameworks!
+
+  # Pods for ReactNativeDrive-tvOS
+
+  target 'ReactNativeDrive-tvOSTests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+end

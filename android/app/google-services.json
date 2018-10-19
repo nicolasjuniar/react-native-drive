@@ -1,0 +1,62 @@
+{
+  "project_info": {
+    "project_number": "356930109629",
+    "firebase_url": "https://react-native-drive.firebaseio.com",
+    "project_id": "react-native-drive",
+    "storage_bucket": "react-native-drive.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:356930109629:android:e7909e5bd4ffe0bc",
+        "android_client_info": {
+          "package_name": "com.reactnativedrive"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "356930109629-mfsl5fdg7mcom853chi67516jgvbq5o7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.reactnativedrive",
+            "certificate_hash": "c9de41aee20e1a2f4311f13f2d46e6684c0a12f7"
+          }
+        },
+        {
+          "client_id": "356930109629-ndkbpm5h6t3s4pfn54ds738u0ususp4t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQj0iIXami2RYQfC_sTtp_jqxnrCx_-u8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "356930109629-ndkbpm5h6t3s4pfn54ds738u0ususp4t.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "356930109629-i4v3lffpg102ov5ju8b59p9b86hc4ae4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.ReactNativeDrive"
+              }
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
