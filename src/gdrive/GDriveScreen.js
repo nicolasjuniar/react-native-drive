@@ -1,10 +1,10 @@
 import React, {Component} from 'react'
 import GDriveComponent from './GDriveComponent'
 import {GoogleSignin, statusCodes} from "react-native-google-signin";
-import {ToastAndroid, View,TouchableOpacity} from "react-native";
+import {ToastAndroid,Alert} from "react-native";
 import axios from "axios";
 import Constant from '../constant/Constant'
-import Icon from 'react-native-vector-icons/FontAwesome'
+import {endpoint} from "../api/Api";
 
 export default class GDriveScreen extends Component {
 
@@ -12,35 +12,52 @@ export default class GDriveScreen extends Component {
         super(props);
         this.state = {
             isLogin: false,
-            listFile: [{
-                'name': 'abcdsdasdads',
-                'mimeType': 'asdsa'
-            }, {
-                'name': 'asdsadsadsa',
-                'mimeType': 'asd'
-            }]
+            listFile: []
         }
     }
 
     getListFile() {
-        const url = "https://www.googleapis.com/drive/v3/files"
         const accessToken = this.state.userInfo.accessToken
-        console.log('access token: ' + accessToken)
-        axios.get(url,
-            {
-                headers: {
-                    "Authorization": "Bearer " + accessToken
-                }
-            }).then(response => {
+        axios.get(endpoint.GET_LIST_FILE, {
+            headers: {
+                "Authorization": "Bearer " + accessToken
+            }
+        }).then(response => {
             console.log(response.data.files)
             this.setState({listFile: response.data.files})
-            ToastAndroid.show("sukses", ToastAndroid.LONG)
         }).catch(
             error => {
                 console.log(error)
                 ToastAndroid.show(error.toString(), ToastAndroid.LONG)
             }
         )
+    }
+
+    deleteFile = fileId => {
+        const accessToken = this.state.userInfo.accessToken
+        Alert.alert(
+            'Alert Title',
+            'My Alert Msg',
+            [
+                {text: 'Ask me later', onPress: () => console.log('Ask me later pressed')},
+                {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+                {text: 'OK', onPress: () => console.log('OK Pressed')},
+            ],
+            { cancelable: false }
+        )
+        // axios.delete(endpoint.DELETE_FILE + fileId, {
+        //     headers: {
+        //         "Authorization": "Bearer " + accessToken
+        //     }
+        // }).then(response => {
+        //     this.setState({
+        //         listFile: this.state.listFile.filter(driveFile => {
+        //             return driveFile.id !== fileId
+        //         }, ToastAndroid.show("Delete Success", ToastAndroid.LONG))
+        //     })
+        // }).catch(error => {
+        //     ToastAndroid.show(error.toString(), ToastAndroid.LONG)
+        // })
     }
 
     googleSignIn = async () => {
@@ -93,7 +110,7 @@ export default class GDriveScreen extends Component {
 
     render() {
         GoogleSignin.configure({
-            scopes: [Constant.DRIVE_READ_ONLY, Constant.DRIVE_AUTH], // what API you want to access on behalf of the user, default is email and profile
+            scopes: [Constant.DRIVE_READ_ONLY, Constant.DRIVE_AUTH, Constant.DRIVE_APPDATA, Constant.DRIVE_FILE], // what API you want to access on behalf of the user, default is email and profile
             webClientId: '356930109629-ndkbpm5h6t3s4pfn54ds738u0ususp4t.apps.googleusercontent.com', // client ID of type WEB for your server (needed to verify user ID and offline access)
             offlineAccess: true, // if you want to access Google API on behalf of the user FROM YOUR SERVER
             hostedDomain: '', // specifies a hosted domain restriction
@@ -101,29 +118,11 @@ export default class GDriveScreen extends Component {
             accountName: '', // [Android] specifies an account name on the device that should be used
         });
         return (
-            <View style={{flex:1}}>
-                <GDriveComponent
-                    onOptionSelected={this.onOptionSelected}
-                    actionBarTitle={this.state.isLogin ? 'logout' : 'login'}
-                    listFile={this.state.listFile}/>
-                <TouchableOpacity
-                    style={{
-                        borderWidth:1,
-                        borderColor:'rgba(0,0,0,0.2)',
-                        alignItems:'center',
-                        justifyContent:'center',
-                        width:70,
-                        position: 'absolute',
-                        bottom: 10,
-                        right: 10,
-                        height:70,
-                        backgroundColor:'#fff',
-                        borderRadius:100,
-                    }}
-                >
-                    <Icon name="rocket"  size={30} color="#01a699" />
-                </TouchableOpacity>
-            </View>
+            <GDriveComponent
+                onOptionSelected={this.onOptionSelected}
+                listFile={this.state.listFile}
+                isLogin={this.state.isLogin}
+                onItemPress={this.deleteFile}/>
         )
     }
 }
