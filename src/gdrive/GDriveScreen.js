@@ -1,10 +1,11 @@
 import React, {Component} from 'react'
 import GDriveComponent from './GDriveComponent'
 import {GoogleSignin, statusCodes} from "react-native-google-signin";
-import {ToastAndroid,Alert} from "react-native";
+import {ToastAndroid, Alert} from "react-native"
 import axios from "axios";
 import Constant from '../constant/Constant'
-import {endpoint} from "../api/Api";
+import {endpoint} from "../api/Api"
+import {getIconName} from "../Utils";
 
 export default class GDriveScreen extends Component {
 
@@ -12,56 +13,66 @@ export default class GDriveScreen extends Component {
         super(props);
         this.state = {
             isLogin: false,
-            listFile: []
+            listFile: [],
+            isLoading: false
         }
     }
 
     getListFile() {
         const accessToken = this.state.userInfo.accessToken
+        this.setState({isLoading: true})
         axios.get(endpoint.GET_LIST_FILE, {
+            params: {
+                orderBy: 'folder'
+            },
             headers: {
                 "Authorization": "Bearer " + accessToken
             }
         }).then(response => {
-            console.log(response.data.files)
-            this.setState({listFile: response.data.files})
+            this.setState({listFile: response.data.items})
         }).catch(
             error => {
-                console.log(error)
                 ToastAndroid.show(error.toString(), ToastAndroid.LONG)
             }
+        ).finally(
+            this.setState({isLoading: false})
         )
     }
 
     deleteFile = fileId => {
         const accessToken = this.state.userInfo.accessToken
         Alert.alert(
-            'Alert Title',
-            'My Alert Msg',
+            'Delete File',
+            'Are you sure want to delete this file?',
             [
-                {text: 'Ask me later', onPress: () => console.log('Ask me later pressed')},
-                {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-                {text: 'OK', onPress: () => console.log('OK Pressed')},
+                {text: 'No', style: 'cancel'},
+                {
+                    text: 'Yes', onPress: () => {
+                        axios.delete(endpoint.DELETE_FILE + fileId, {
+                            headers: {
+                                "Authorization": "Bearer " + accessToken
+                            }
+                        }).then(response => {
+                            this.setState({
+                                listFile: this.state.listFile.filter(driveFile => {
+                                    return driveFile.id !== fileId
+                                }, ToastAndroid.show("Delete Success", ToastAndroid.LONG))
+                            })
+                        }).catch(error => {
+                            ToastAndroid.show(error.toString(), ToastAndroid.LONG)
+                        }).finally(
+                            this.setState({isLoading: false})
+                        )
+                    }
+                },
             ],
-            { cancelable: false }
+            {cancelable: false}
         )
-        // axios.delete(endpoint.DELETE_FILE + fileId, {
-        //     headers: {
-        //         "Authorization": "Bearer " + accessToken
-        //     }
-        // }).then(response => {
-        //     this.setState({
-        //         listFile: this.state.listFile.filter(driveFile => {
-        //             return driveFile.id !== fileId
-        //         }, ToastAndroid.show("Delete Success", ToastAndroid.LONG))
-        //     })
-        // }).catch(error => {
-        //     ToastAndroid.show(error.toString(), ToastAndroid.LONG)
-        // })
     }
 
     googleSignIn = async () => {
         try {
+            this.setState({isLoading: true})
             await GoogleSignin.hasPlayServices();
             const userInfo = await GoogleSignin.signIn();
             this.setState({userInfo, isLogin: true}, () => this.getListFile());
@@ -85,17 +96,22 @@ export default class GDriveScreen extends Component {
                     break
                 }
             }
+        } finally {
+            this.setState({isLoading: false})
         }
     };
 
     googleSignOut = async () => {
         try {
+            await this.setState({isLoading: true})
             await GoogleSignin.revokeAccess();
             await GoogleSignin.signOut();
-            this.setState({user: null, isLogin: false});
+            this.setState({user: null, isLogin: false, listFile: []});
             ToastAndroid.show('Logout Success', ToastAndroid.LONG)
         } catch (error) {
-            console.error(error);
+            ToastAndroid.show(error.toString(), ToastAndroid.LONG)
+        } finally {
+            this.setState({isLoading: false})
         }
     };
 
@@ -122,7 +138,8 @@ export default class GDriveScreen extends Component {
                 onOptionSelected={this.onOptionSelected}
                 listFile={this.state.listFile}
                 isLogin={this.state.isLogin}
-                onItemPress={this.deleteFile}/>
+                onItemPress={this.deleteFile}
+                isLoading={this.state.isLoading}/>
         )
     }
 }

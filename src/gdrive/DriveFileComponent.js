@@ -2,27 +2,34 @@ import React from 'react'
 import {Text, View, TouchableOpacity} from 'react-native'
 import PropTypes from 'prop-types'
 import Color from '../constant/Color'
-import {getExtensionFile} from "../Utils";
+import color from 'react-native-material-color'
+import {getIconName} from "../Utils";
+import Icon from 'react-native-vector-icons/MaterialIcons'
 
 const driveFileComponent = (props) => (
     <View style={{
         margin: 8
     }}>
-        <TouchableOpacity onPress={()=>props.onItemPress(props.driveFile.id)}>
+        <TouchableOpacity
+            onPress={() => getIconName(props.driveFile.mimeType) !== 'folder' && props.onItemPress(props.driveFile.id)}>
             <View
                 style={{
                     borderBottomColor: Color.blueInvestree,
                     borderBottomWidth: 1
                 }}/>
-            <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
+            <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
                 <Text style={{
-                    marginTop: 10,
-                    marginBottom: 10
-                }}>{props.driveFile.name}</Text>
-                <Text style={{
-                    marginTop: 10,
-                    marginBottom: 10
-                }}>{getExtensionFile(props.driveFile.mimeType)}</Text>
+                    fontFamily: 'Roboto-Regular',
+                    color: color.GREY["800"]
+                }}>{props.driveFile.title}</Text>
+                <Icon
+                    name={getIconName(props.driveFile.mimeType)}
+                    style={{
+                        marginTop: 10,
+                        marginBottom: 10
+                    }}
+                    color={color.GREY["800"]}
+                    size={30}/>
             </View>
             <View
                 style={{
